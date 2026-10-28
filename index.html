@@ -1,0 +1,122 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><title>Aesthetic Records</title>
+<style>
+:root{--bg:#f3f7f6;--card:#fff;--ink:#12302d;--mut:#556d6a;--line:#cfdedb;--acc:#0f766e;--on:#fff;--bad:#b42318;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1a19;--card:#162726;--ink:#e6f2f0;--mut:#9bb5b1;--line:#2a403d;--acc:#2dd4bf;--on:#04201d;--bad:#ff8a7a}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font:16px/1.6 Vazirmatn,Tahoma,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{position:sticky;top:0;z-index:5;background:var(--acc);color:var(--on);display:flex;align-items:center;gap:4px;padding:10px 14px}
+header h1{font-size:18px;margin:0;flex:1}header button{background:none;border:0;color:inherit;font:inherit;padding:6px 10px}
+main{max-width:640px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+label{display:block;font-size:14px;color:var(--mut);margin:8px 0 2px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px}
+input:disabled,select:disabled,textarea:disabled{opacity:.75}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
+.btn{font:inherit;border:0;border-radius:8px;padding:10px 14px;background:var(--acc);color:var(--on);cursor:pointer}
+.btn.g{background:none;color:var(--acc);border:1px solid var(--acc)}.btn.d{background:none;color:var(--bad);border:1px solid var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.row>*{flex:1}
+.it{display:flex;gap:10px;align-items:center;padding:12px;border-bottom:1px solid var(--line);cursor:pointer}.it:last-child{border:0}
+.no{min-width:42px;font-weight:700;color:var(--acc)}.mut{color:var(--mut);font-size:14px}
+.map{position:relative;touch-action:manipulation;border:1px solid var(--line);border-radius:10px;overflow:hidden;direction:ltr}.map img{display:block;width:100%}
+.dot{position:absolute;width:26px;height:26px;margin:-13px;border-radius:50%;background:var(--bad);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;pointer-events:none;border:2px solid #fff}
+.pt{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.pt .r{display:grid;grid-template-columns:1fr 70px 80px;gap:6px;margin-top:6px}.pt .h{display:flex;gap:6px;align-items:center}
+.ltr{direction:ltr;text-align:left}pre{white-space:pre-wrap;font:13px/1.5 system-ui}
+</style></head><body><header id="hd"></header><main id="app"></main>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let LANG=localStorage.getItem('lang')||'fa';
+const S={en:{app:'Aesthetic Records',back:'← Back',newp:'New patient',search:'Search: name, phone or file number',empty:'No patients yet. Start with “New patient”.',nomatch:'No patient matches.',visits:'visits',pts:'points',file:'File ',name:'Full name',phone:'Phone',gender:'Gender',female:'Female',male:'Male',newv:'New visit',novisit:'No visits yet.',delp:'Delete this patient and their visits',delv:'Delete this visit',cdelp:'Delete this patient and all their visits for good?',cdelv:'Delete this visit for good?',visit:'Visit',date:'Date (Jalali)',complaint:'Chief complaint',history:'Medical history',allergies:'Allergies',consent:'Consent',cv:'Verbal consent obtained',cw:'Written consent obtained',none:'—',done:'Procedures performed',notes:'Clinician notes',map:'Face map',maphint:'Tap the face to add a point.',ptnote:'Note',product:'Product',amount:'Amount',unit:'Unit',del:'Delete point',ro:'This record is in the sheet, so it is read-only here. Change it on the desktop program.',local:'Not sent to the sheet yet.',settings:'Google Sheet',cid:'Google OAuth client ID (Web)',sid:'Spreadsheet ID',psn:'Patients worksheet name',pull:'Get records from the sheet',push:'Send new records to the sheet',cpush:'Send the new patients and visits made on this phone to the sheet? Existing rows are never changed.',exp:'Back up to a file',imp:'Restore from a backup',cimp:'Replace everything on this phone with the backup?',badfile:'This backup file is not valid.',priv:'Data is stored on this phone. Back up regularly.',fill:'Fill in the client ID and spreadsheet ID first.',busy:'Working…'},
+fa:{app:'پرونده‌های زیبایی',back:'→ بازگشت',newp:'بیمار جدید',search:'جستجو: نام، تلفن یا شماره پرونده',empty:'هنوز بیماری ثبت نشده. با «بیمار جدید» شروع کنید.',nomatch:'بیماری با این مشخصات پیدا نشد.',visits:'ویزیت',pts:'نقطه',file:'پرونده ',name:'نام و نام خانوادگی',phone:'تلفن',gender:'جنسیت',female:'زن',male:'مرد',newv:'ویزیت جدید',novisit:'ویزیتی ثبت نشده.',delp:'حذف این بیمار و ویزیت‌هایش',delv:'حذف این ویزیت',cdelp:'این بیمار و همه‌ی ویزیت‌هایش برای همیشه حذف شود؟',cdelv:'این ویزیت برای همیشه حذف شود؟',visit:'ویزیت',date:'تاریخ (شمسی)',complaint:'شکایت اصلی',history:'سابقه‌ی پزشکی',allergies:'حساسیت‌ها',consent:'رضایت‌نامه',cv:'رضایت شفاهی گرفته شد',cw:'رضایت کتبی گرفته شد',none:'—',done:'اقدامات انجام‌شده',notes:'یادداشت پزشک',map:'نقشه‌ی صورت',maphint:'روی صورت بزنید تا نقطه اضافه شود.',ptnote:'یادداشت',product:'محصول',amount:'مقدار',unit:'واحد',del:'حذف نقطه',ro:'این رکورد در شیت است و اینجا فقط‌خواندنی است. تغییرش را در برنامه‌ی دسکتاپ انجام دهید.',local:'هنوز به شیت فرستاده نشده.',settings:'شیت گوگل',cid:'شناسه‌ی کلاینت OAuth گوگل (نوع Web)',sid:'شناسه‌ی اسپردشیت',psn:'نام برگه‌ی بیماران',pull:'گرفتن رکوردها از شیت',push:'فرستادن رکوردهای جدید به شیت',cpush:'بیماران و ویزیت‌های جدیدی که روی این گوشی ساخته‌اید به شیت فرستاده شوند؟ ردیف‌های موجود هرگز تغییر نمی‌کنند.',exp:'پشتیبان‌گیری (فایل)',imp:'بازیابی از پشتیبان',cimp:'همه‌ی اطلاعات این گوشی با پشتیبان جایگزین شود؟',badfile:'این فایل پشتیبان معتبر نیست.',priv:'اطلاعات روی همین گوشی ذخیره می‌شود. مرتب پشتیبان بگیرید.',fill:'اول شناسه‌ی کلاینت و شناسه‌ی اسپردشیت را وارد کنید.',busy:'در حال انجام…'}};
+const t=k=>S[LANG][k]??k,fa=()=>LANG=='fa';
+let D;try{D=JSON.parse(localStorage.getItem('ar2'))}catch(e){}if(!D||!D.patients)D={patients:[],visits:[]};
+let C;try{C=JSON.parse(localStorage.getItem('arc'))}catch(e){}C=C||{cid:'',sid:'',ps:'Patients'};
+const save=()=>{try{localStorage.setItem('ar2',JSON.stringify(D))}catch(e){alert('Storage full / حافظه پر است')}};
+const saveC=()=>localStorage.setItem('arc',JSON.stringify(C));
+const fa2en=s=>String(s).replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c));
+function jal(gy,gm,gd){const g=[0,31,59,90,120,151,181,212,243,273,304,334],y=gm>2?gy+1:gy;let d=355666+365*gy+((y+3)>>2)-Math.floor((y+99)/100)+Math.floor((y+399)/400)+gd+g[gm-1],j=-1595+33*Math.floor(d/12053);d%=12053;j+=4*Math.floor(d/1461);d%=1461;if(d>365){j+=Math.floor((d-1)/365);d=(d-1)%365}const m=d<186?1+Math.floor(d/31):7+Math.floor((d-186)/30),k=1+(d<186?d%31:(d-186)%30);return j+'-'+String(m).padStart(2,'0')+'-'+String(k).padStart(2,'0')}
+const today=()=>{const n=new Date();return jal(n.getFullYear(),n.getMonth()+1,n.getDate())};
+const uid=()=>crypto.randomUUID(),now=()=>new Date().toISOString().replace('Z','+00:00');
+let V={n:'list',id:'',q:'',log:''};
+const P=()=>D.patients.find(p=>p.patient_id===V.id),VI=()=>D.visits.find(v=>v.visit_id===V.id);
+const go=(n,id='')=>{V={n,id,q:'',log:V.log};render();scrollTo(0,0)};
+const fld=(o,k,l,rows)=>{const x=o=='p'?P():VI(),d=x.synced?'disabled':'';return rows?`<label>${l}<textarea rows="${rows}" ${d} data-f="${o}.${k}">${esc(x[k])}</textarea></label>`:`<label>${l}<input ${d} data-f="${o}.${k}" value="${esc(x[k])}"${k=='visit_date'||k=='phone'?' class="ltr"':''}></label>`};
+function lst(){const q=fa2en(V.q).trim().toLowerCase(),r=D.patients.filter(p=>!q||(p.full_name+' '+p.phone+' '+p.patient_id).toLowerCase().includes(q)).sort((a,b)=>(+b.patient_id||0)-(+a.patient_id||0));
+return r.length?r.map(p=>`<div class="it" data-a="pt" data-i="${esc(p.patient_id)}"><span class="no">${esc(p.patient_id.slice(0,8))}</span><span style="flex:1">${esc(p.full_name)}<div class="mut ltr">${esc(p.phone)}</div></span><span class="mut">${D.visits.filter(v=>v.patient_id==p.patient_id).length} ${t('visits')}</span></div>`).join(''):`<p class="mut" style="padding:0 12px">${D.patients.length?t('nomatch'):t('empty')}</p>`}
+const unit=['','mL','U','IU','mg','units'];
+function render(){let h='',ti=t('app'),b='';
+if(V.n=='list'){h=`<div class="row"><button class="btn" data-a="newp">${t('newp')}</button><button class="btn g" data-a="set">${t('settings')}</button></div><input id="q" placeholder="${t('search')}" value="${esc(V.q)}"><div class="card" id="lst" style="margin-top:12px;padding:0">${lst()}</div><p class="mut">${t('priv')}</p>`}
+else if(V.n=='set'){b=1;ti=t('settings');h=`<div class="card"><label>${t('cid')}<input class="ltr" data-f="c.cid" value="${esc(C.cid)}"></label><label>${t('sid')}<input class="ltr" data-f="c.sid" value="${esc(C.sid)}"></label><label>${t('psn')}<input class="ltr" data-f="c.ps" value="${esc(C.ps)}"></label></div>
+<div class="row"><button class="btn" data-a="pull">${t('pull')}</button><button class="btn" data-a="push">${t('push')}</button></div><pre id="log">${esc(V.log)}</pre>
+<div class="row"><button class="btn g" data-a="exp">${t('exp')}</button><button class="btn g" data-a="imp">${t('imp')}</button></div><input type="file" id="fl" accept=".json" hidden>`}
+else if(V.n=='pat'){const p=P();b=1;ti=t('file')+p.patient_id;const vs=D.visits.filter(v=>v.patient_id==p.patient_id).sort((a,c)=>c.visit_date.localeCompare(a.visit_date)),d=p.synced?'disabled':'';
+h=`<div class="card">${p.synced?`<p class="mut">${t('ro')}</p>`:''}${fld('p','full_name',t('name'))}${fld('p','phone',t('phone'))}<label>${t('gender')}<select ${d} data-f="p.gender"><option value="female"${p.gender=='female'?' selected':''}>${t('female')}</option><option value="male"${p.gender=='male'?' selected':''}>${t('male')}</option></select></label></div>
+<div class="row"><button class="btn" data-a="newv">${t('newv')}</button></div><div class="card" style="padding:0">${vs.map(v=>`<div class="it" data-a="vi" data-i="${v.visit_id}"><span class="no ltr">${esc(v.visit_date)}</span><span style="flex:1">${esc(v.chief_complaint||v.procedures_performed)||'<span class="mut">—</span>'}</span><span class="mut">${v.points.length} ${t('pts')}</span></div>`).join('')||`<p class="mut" style="padding:12px">${t('novisit')}</p>`}</div>
+${p.synced?'':`<button class="btn d" data-a="delp">${t('delp')}</button>`}`}
+else{const v=VI(),p=D.patients.find(x=>x.patient_id==v.patient_id),d=v.synced?'disabled':'';b=1;ti=t('visit')+' — '+esc(p.full_name);
+h=`<div class="card"><p class="mut">${v.synced?t('ro'):t('local')}</p>${fld('v','visit_date',t('date'))}${fld('v','chief_complaint',t('complaint'),2)}${fld('v','medical_history',t('history'),2)}${fld('v','allergies',t('allergies'),2)}
+<label>${t('consent')}<select ${d} data-f="v.consent_status"><option value="">${t('none')}</option><option value="Verbal consent obtained"${v.consent_status=='Verbal consent obtained'?' selected':''}>${t('cv')}</option><option value="Written consent obtained"${v.consent_status=='Written consent obtained'?' selected':''}>${t('cw')}</option></select></label>${fld('v','procedures_performed',t('done'),2)}${fld('v','clinician_notes',t('notes'),2)}</div>
+<div class="card"><b>${t('map')}</b>${v.synced?'':`<p class="mut">${t('maphint')}</p>`}<div class="map" ${v.synced?'':'data-a="map"'}><img src="assets/face_front_${v.face_model=='male'?'male':'female'}.png" alt="">${v.points.map((m,i)=>`<span class="dot" style="left:${m.x*100}%;top:${m.y*100}%">${i+1}</span>`).join('')}</div>
+${v.points.map((m,i)=>`<div class="pt"><div class="h"><b>${i+1}</b><input ${d} data-f="m.notes" data-i="${i}" placeholder="${t('ptnote')}" value="${esc(m.notes)}">${v.synced?'':`<button class="btn d" data-a="delm" data-i="${i}" aria-label="${t('del')}">✕</button>`}</div><div class="r"><input ${d} data-f="m.product_name" data-i="${i}" placeholder="${t('product')}" value="${esc(m.product_name)}"><input ${d} class="ltr" inputmode="decimal" data-f="m.amount" data-i="${i}" placeholder="${t('amount')}" value="${esc(m.amount)}"><select ${d} data-f="m.amount_unit" data-i="${i}">${unit.map(u=>`<option${u==m.amount_unit?' selected':''}>${u}</option>`).join('')}</select></div></div>`).join('')}</div>
+${v.synced?'':`<button class="btn d" data-a="delv">${t('delv')}</button>`}`}
+document.documentElement.lang=LANG;document.documentElement.dir=fa()?'rtl':'ltr';document.title=t('app');
+$('#hd').innerHTML=(b?`<button data-a="back">${t('back')}</button>`:'')+'<h1>'+ti+'</h1><button data-a="lang" aria-label="Language">'+(fa()?'EN':'فا')+'</button>';$('#app').innerHTML=h}
+const mk=(c,o)=>Object.assign(c,o);
+const ACT={lang(){LANG=fa()?'en':'fa';localStorage.setItem('lang',LANG);render()},set:()=>go('set'),
+newp(){const mx=Math.max(0,...D.patients.map(p=>+fa2en(p.patient_id)||0)),id=String(mx+1);D.patients.push({patient_id:id,full_name:'',phone:'',gender:'female',synced:false});save();go('pat',id)},
+pt:i=>go('pat',i),back(){V.n=='visit'?go('pat',VI().patient_id):go('list')},
+newv(){const p=P(),prev=D.visits.filter(v=>v.patient_id==p.patient_id).sort((a,c)=>c.visit_date.localeCompare(a.visit_date))[0]||{},n=now(),id=uid();
+D.visits.push({visit_id:id,patient_id:p.patient_id,visit_date:today(),face_model:p.gender=='male'?'male':'female',chief_complaint:'',patient_goals:'',medical_history:prev.medical_history||'',allergies:prev.allergies||'',examination_findings:'',assessment:'',treatment_plan:'',consent_status:'Verbal consent obtained',procedures_performed:'',follow_up_plan:'',adverse_events:'',clinician_notes:'',visit_status:'draft',created_at:n,updated_at:n,points:[],synced:false});save();go('visit',id)},
+vi:i=>go('visit',i),
+delp(){const p=P();if(confirm(t('cdelp'))){D.visits=D.visits.filter(v=>v.patient_id!=p.patient_id);D.patients=D.patients.filter(x=>x!==p);save();go('list')}},
+delv(){if(confirm(t('cdelv'))){const v=VI(),pid=v.patient_id;D.visits=D.visits.filter(x=>x!==v);save();go('pat',pid)}},
+delm(i){const v=VI();v.points.splice(+i,1);v.points.forEach((m,k)=>m.sort_order=k);save();render()},
+map(i,e){const r=e.currentTarget.getBoundingClientRect(),v=VI(),n=now();v.points.push({point_id:uid(),visit_id:v.visit_id,facial_view:'front',x:+((e.clientX-r.left)/r.width).toFixed(6),y:+((e.clientY-r.top)/r.height).toFixed(6),label:'',procedure_type:'',product_id:'',product_name:'',manufacturer:'',amount:'',amount_unit:'',lot_number:'',expiry_date:'',technique:'',needle_or_cannula:'',notes:'',shape:'point',vertices:[],preset_name:'',archived:false,sort_order:v.points.length,created_at:n,updated_at:n});save();render()},
+exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='aesthetic_records_backup_'+today()+'.json';a.click()},
+imp:()=>$('#fl').click(),pull:()=>run(pull),push(){if(confirm(t('cpush')))run(push)}};
+document.addEventListener('click',e=>{const x=e.target.closest('[data-a]');if(x)ACT[x.dataset.a](x.dataset.i,e)});
+document.addEventListener('input',e=>{const x=e.target;if(x.id=='q'){V.q=x.value;$('#lst').innerHTML=lst();return}if(!x.dataset.f)return;const[o,k]=x.dataset.f.split('.');
+if(o=='c'){C[k]=x.value.trim();saveC();return}if(o=='m')VI().points[+x.dataset.i][k]=x.value;else(o=='p'?P():VI())[k]=k=='visit_date'?fa2en(x.value):x.value;save()});
+document.addEventListener('change',e=>{if(e.target.id!='fl')return;const f=e.target.files[0];if(!f)return;f.text().then(s=>{const x=JSON.parse(s);if(!x.patients||!x.visits)throw 0;if(confirm(t('cimp'))){D=x;save();render()}}).catch(()=>alert(t('badfile')))});
+/* ---------- Google Sheets: same worksheets and column names as the desktop program ---------- */
+const hk=s=>String(s).replace(/[\s_\-]/g,'').toLowerCase(),nn=s=>String(s).trim().toLowerCase().replace(/[_\s]+/g,' ');
+const AL={patient_id:['patient id','patientid','شناسه بیمار','کد بیمار','file number','file no','file no.','fileno','شماره پرونده','شماره‌ی پرونده','شماره پرونده بیمار','پرونده'],full_name:['full name','name','patient name','نام','نام و نام خانوادگی','نام بیمار','اسم'],phone:['phone','telephone','mobile','phone number','شماره تماس','تلفن','موبایل','شماره موبایل'],gender:['gender','sex','جنسیت']};
+const pcol=h=>{const o={};h.forEach((c,i)=>{for(const f in AL)if(!(f in o)&&AL[f].map(nn).includes(nn(c)))o[f]=i});return o};
+const gnd=s=>{s=nn(s);return['f','woman','female','زن','خانم'].includes(s)?'female':['m','man','male','مرد','آقا'].includes(s)?'male':''};
+const enc=v=>typeof v=='boolean'?(v?'TRUE':'FALSE'):typeof v=='number'?(Number.isInteger(v)?String(v):v.toFixed(6).replace(/0+$/,'').replace(/\.$/,'')):Array.isArray(v)?JSON.stringify(v):String(v??'');
+const rowOf=(h,o)=>{const m={};for(const k in o)if(k!='points'&&k!='synced')m[hk(k)]=enc(o[k]);return h.map(c=>m[hk(c)]??'')};
+let tok='',tokExp=0;
+const gsi=()=>window.google&&google.accounts?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=ok;s.onerror=()=>no('Could not load Google sign-in (offline?)');document.head.appendChild(s)});
+async function token(){if(tok&&Date.now()<tokExp)return tok;await gsi();return new Promise((ok,no)=>google.accounts.oauth2.initTokenClient({client_id:C.cid,scope:'https://www.googleapis.com/auth/spreadsheets',callback:r=>{if(r.error)return no(r.error);tok=r.access_token;tokExp=Date.now()+r.expires_in*1000-60000;ok(tok)}}).requestAccessToken())}
+async function api(p,opt={}){const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(C.sid)}/${p}`,{...opt,headers:{Authorization:'Bearer '+await token(),'Content-Type':'application/json'}});if(!r.ok)throw 'Google: HTTP '+r.status+(r.status==400?' (worksheet or column missing? Use Prepare Google Sheet on the desktop)':'');return r.json()}
+const log=m=>{V.log+=m+'\n';const e=$('#log');if(e)e.textContent=V.log};
+async function run(fn){if(!C.cid||!C.sid){alert(t('fill'));return}V.log=t('busy')+'\n';render();try{await fn()}catch(e){log('✕ '+(e&&e.message||e))}}
+const tab=v=>{const h=(v||[])[0]||[];return{h,rows:(v||[]).slice(1).map(r=>{const o={};h.forEach((c,i)=>o[hk(c)]=r[i]??'');return o})}};
+let SEEN={visits:new Set(),points:new Set()};
+async function pull(){const r=await api('values:batchGet?'+[C.ps,'Visits','InjectionPoints'].map(x=>'ranges='+encodeURIComponent(x)).join('&'));
+const [pv,vv,iv]=r.valueRanges.map(x=>x.values),pp=tab(pv),cols=pcol(pp.h);let np=0,nv=0,skip=0;
+if(!('full_name'in cols)||!('patient_id'in cols))throw 'The patients worksheet needs a name column and a PatientID column.';
+for(const row of (pv||[]).slice(1)){const g=f=>f in cols?String(row[cols[f]]??'').trim():'';const id=g('patient_id'),nm=g('full_name');if(!id||!nm)continue;
+ const i=D.patients.findIndex(p=>p.patient_id==id);if(i>=0&&!D.patients[i].synced){skip++;continue}
+ const o={patient_id:id,full_name:nm,phone:g('phone'),gender:gnd(g('gender')),synced:true};i>=0?D.patients[i]=o:(D.patients.push(o),np++)}
+const pts={};SEEN={visits:new Set(),points:new Set()};
+for(const o of tab(iv).rows){SEEN.points.add(o.pointid);if(String(o.archived).toUpperCase()=='TRUE'||!o.visitid)continue;(pts[o.visitid]??=[]).push({point_id:o.pointid,visit_id:o.visitid,facial_view:o.facialview||'front',x:parseFloat(o.x)||0,y:parseFloat(o.y)||0,label:o.label||'',procedure_type:o.proceduretype||'',product_id:o.productid||'',product_name:o.productname||'',manufacturer:o.manufacturer||'',amount:o.amount||'',amount_unit:o.amountunit||'',lot_number:o.lotnumber||'',expiry_date:o.expirydate||'',technique:o.technique||'',needle_or_cannula:o.needleorcannula||'',notes:o.notes||'',shape:o.shape||'point',vertices:[],preset_name:o.presetname||'',archived:false,sort_order:parseInt(o.sortorder)||0,created_at:o.createdat||'',updated_at:o.updatedat||''})}
+const VF=['visit_id','patient_id','visit_date','face_model','chief_complaint','patient_goals','medical_history','allergies','examination_findings','assessment','treatment_plan','consent_status','procedures_performed','follow_up_plan','adverse_events','clinician_notes','visit_status','created_at','updated_at'];
+for(const o of tab(vv).rows){if(!o.visitid)continue;SEEN.visits.add(o.visitid);const i=D.visits.findIndex(v=>v.visit_id==o.visitid);if(i>=0&&!D.visits[i].synced){skip++;continue}
+ const v={synced:true,points:(pts[o.visitid]||[]).sort((a,b)=>a.sort_order-b.sort_order)};VF.forEach(f=>v[f]=o[hk(f)]??'');v.face_model=v.face_model||'female';i>=0?D.visits[i]=v:(D.visits.push(v),nv++)}
+save();log(`✓ ${np} new patients, ${nv} new visits read.`+(skip?` ${skip} not replaced (same ID exists on the phone, not sent yet).`:''));render()}
+async function push(){await pull();const hdr=async n=>{try{return((await api('values/'+encodeURIComponent(n+'!1:1'))).values||[[]])[0]}catch(e){return null}};
+const H={P:await hdr(C.ps),V:await hdr('Visits'),I:await hdr('InjectionPoints'),A:await hdr('AuditLog')},cols=pcol(H.P||[]);
+if(!H.P||!('full_name'in cols)||!('patient_id'in cols))throw 'Patients worksheet or its name/PatientID columns not found.';
+if(!H.V||!H.I||!['visitid','patientid','visitdate'].every(k=>H.V.map(hk).includes(k))||!['pointid','visitid','x','y'].every(k=>H.I.map(hk).includes(k)))throw 'Visits / InjectionPoints worksheets are missing or have no proper columns. Run Settings → Prepare Google Sheet on the desktop first.';
+const add=(n,rows)=>rows.length?api('values/'+encodeURIComponent(n)+':append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',{method:'POST',body:JSON.stringify({values:rows})}):0;
+let np=0,nv=0;const newP=D.patients.filter(p=>!p.synced&&p.full_name.trim());
+if(newP.length){await add(C.ps,newP.map(p=>H.P.map((c,i)=>{const f=Object.keys(cols).find(k=>cols[k]==i);return f=='patient_id'?p.patient_id:f=='full_name'?p.full_name:f=='phone'?p.phone:f=='gender'?p.gender:''})));newP.forEach(p=>p.synced=true);np=newP.length;save()}
+for(const v of D.visits.filter(v=>!v.synced)){const p=D.patients.find(x=>x.patient_id==v.patient_id);if(!p||!p.synced){log('• Skipped a visit: its patient is not in the sheet.');continue}
+ if(SEEN.visits.has(v.visit_id)){v.synced=true;continue}
+ const n=now();v.updated_at=n;await add('InjectionPoints',v.points.filter(m=>!SEEN.points.has(m.point_id)).map(m=>rowOf(H.I,{...m,updated_at:n})));   // markers first: the Visits row is what completes the record
+ await add('Visits',[rowOf(H.V,v)]);if(H.A)await add('AuditLog',[rowOf(H.A,{audit_id:uid(),timestamp:n,actor:'phone',action:'create',entity_type:'visit',entity_id:v.visit_id,details:'token='+uid()})]);
+ v.synced=true;nv++;save()}
+log(`✓ Sent ${np} new patients and ${nv} new visits. Existing rows were not changed.`);render()}
+render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
